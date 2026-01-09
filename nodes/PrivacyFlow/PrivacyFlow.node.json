@@ -1,0 +1,121 @@
+{
+	"displayName": "Privacyflow",
+	"name": "privacyFlow",
+	"icon": "file:privacyflow.svg",
+	"group": ["transform"],
+	"version": 1,
+	"subtitle": "={{$parameter.operation + \": \" + $parameter.resource}}",
+	"description": "Privacy-first messaging actions for n8n workflows",
+	"defaults": {
+		"name": "Privacyflow"
+	},
+	"usableAsTool": true,
+	"inputs": ["main"],
+	"outputs": ["main"],
+	"credentials": [
+		{
+			"name": "privacyFlowApi",
+			"required": true
+		}
+	],
+	"requestDefaults": {
+		"baseURL": "={{$credentials.baseUrl}}",
+		"headers": {
+			"Accept": "application/json",
+			"Content-Type": "application/json"
+		}
+	},
+	"properties": [
+		{
+			"displayName": "Resource",
+			"name": "resource",
+			"type": "options",
+			"noDataExpression": true,
+			"options": [
+				{
+					"name": "Message Actions",
+					"value": "message-actions"
+				},
+				{
+					"name": "Contact Management",
+					"value": "contact-management"
+				}
+			],
+			"default": "message-actions"
+		},
+		{
+			"displayName": "Operation",
+			"name": "operation",
+			"type": "options",
+			"noDataExpression": true,
+			"displayOptions": {
+				"show": {
+					"resource": ["message-actions"]
+				}
+			},
+			"options": [
+				{
+					"name": "Send a text message",
+					"value": "sendTextMessage",
+					"description": "Send a plaintext message"
+				},
+				{
+					"name": "Get all unread messages",
+					"value": "getUnreadMessages",
+					"description": "Retrieve messages that failed to deliver"
+				}
+			],
+			"default": "sendTextMessage"
+		},
+		{
+			"displayName": "Operation",
+			"name": "operation",
+			"type": "options",
+			"noDataExpression": true,
+			"displayOptions": {
+				"show": {
+					"resource": ["contact-management"]
+				}
+			},
+			"options": [
+				{
+					"name": "List contacts",
+					"value": "listContacts",
+					"description": "Get available contacts"
+				}
+			],
+			"default": "listContacts"
+		},
+		{
+			"displayName": "Recipient (Contact ID)",
+			"name": "recipient",
+			"type": "string",
+			"default": "",
+			"required": true,
+			"description": "The contact ID to send the message to. PrivacyFlow will automatically determine the correct messenger protocol.",
+			"displayOptions": {
+				"show": {
+					"resource": ["message-actions"],
+					"operation": ["sendTextMessage"]
+				}
+			}
+		},
+		{
+			"displayName": "Message",
+			"name": "message",
+			"type": "string",
+			"typeOptions": {
+				"multipleValues": false
+			},
+			"default": "",
+			"required": true,
+			"description": "The message content to send (max 10,000 characters)",
+			"displayOptions": {
+				"show": {
+					"resource": ["message-actions"],
+					"operation": ["sendTextMessage"]
+				}
+			}
+		}
+	]
+}

@@ -1,0 +1,41 @@
+{
+  "displayName": "PrivacyFlow Trigger",
+  "name": "privacyFlowTrigger",
+  "icon": "file:privacyflow.svg",
+  "group": ["trigger"],
+  "version": 1,
+  "subtitle": "Poll Messages",
+  "description": "Start workflows when PrivacyFlow messages are received",
+  "defaults": {
+    "name": "PrivacyFlow Trigger"
+  },
+  "inputs": [],
+  "outputs": ["main"],
+  "polling": true,
+  "credentials": [
+    {
+      "name": "privacyFlowApi",
+      "required": true
+    }
+  ],
+  "requestDefaults": {
+    "baseURL": "={{$credentials.baseUrl}}",
+    "headers": {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    }
+  },
+  "properties": [
+    {
+      "displayName": "Message Limit",
+      "name": "messageLimit",
+      "type": "number",
+      "typeOptions": {
+        "minValue": 1,
+        "maxValue": 100
+      },
+      "default": 50,
+      "description": "Maximum number of messages to retrieve per poll (1-100)"
+    }
+  ]
+}
