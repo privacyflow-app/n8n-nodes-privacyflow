@@ -248,7 +248,7 @@ The development server starts n8n with the PrivacyFlow nodes loaded and hot-relo
 ```
 n8n-nodes-privacyflow/
 ├── credentials/
-│   └── PrivacyFlow.credentials.ts    # API credential definition
+│   └── PrivacyFlowApi.credentials.ts    # API credential definition
 ├── nodes/
 │   ├── PrivacyFlow/
 │   │   ├── PrivacyFlow.node.ts       # Action node implementation
