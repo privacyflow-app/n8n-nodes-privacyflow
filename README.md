@@ -1,247 +1,386 @@
-![Banner image](https://user-images.githubusercontent.com/10284570/173569848-c624317f-42b1-45a6-ab09-f0ea3c247648.png)
+![Banner image](banner.jpeg)
 
-# n8n-nodes-starter
+# n8n-nodes-privacyflow
 
-This starter repository helps you build custom integrations for [n8n](https://n8n.io). It includes example nodes, credentials, the node linter, and all the tooling you need to get started.
+[n8n](https://n8n.io/) community node for **PrivacyFlow** - privacy-first encrypted messaging for your workflows.
+
+PrivacyFlow enables seamless automation with end-to-end encrypted messaging through **Signal**, **SimpleX**, and **Session**. Zero logging, zero big-tech, complete privacy.
+
+[Installation](#installation) • [Features](#features) • [Operations](#operations) • [Credentials](#credentials) • [Usage Examples](#usage-examples) • [Security & Privacy](#security--privacy) • [Development](#development) • [Resources](#resources)
+
+## Features
+
+- **Privacy-First Messaging** - Send and receive messages through Signal, SimpleX, and Session
+- **Zero Logging** - No message logging or tracking by PrivacyFlow
+- **End-to-End Encryption** - All messages encrypted using the underlying protocol's E2EE
+- **No Big-Tech Dependencies** - Self-hosted alternatives to mainstream messaging platforms
+- **Seamless Automation** - Integrate encrypted messaging into your n8n workflows
+- **Polling Trigger** - Automatically start workflows when new messages arrive
 
 ## Quick Start
 
-> [!TIP]
-> **New to building n8n nodes?** The fastest way to get started is with `npm create @n8n/node`. This command scaffolds a complete node package for you using the [@n8n/node-cli](https://www.npmjs.com/package/@n8n/node-cli).
-
-**To create a new node package from scratch:**
+### Installation
 
 ```bash
-npm create @n8n/node
+npm install n8n-nodes-privacyflow
 ```
 
-**Already using this starter? Start developing with:**
+Restart your n8n instance and the PrivacyFlow nodes will be available.
+
+### Setup Credentials
+
+1. Navigate to **Credentials** in n8n
+2. Create a new **PrivacyFlow API** credential
+3. Enter your API Key from [PrivacyFlow Dashboard](https://privacyflow.app)
+4. Confirm the Base URL (default: `https://api.privacyflow.app`)
+5. Test the connection
+
+### Send Your First Message
+
+1. Add a **PrivacyFlow** node to your workflow
+2. Select **Message Actions** → **Send a text message**
+3. Enter a Recipient (Contact ID) and your message
+4. Execute the workflow
+
+## Installation
+
+Follow the [n8n community nodes installation guide](https://docs.n8n.io/integrations/community-nodes/installation/).
+
+### Requirements
+
+- n8n version 1.0.0 or higher
+- PrivacyFlow API account ([sign up](https://privacyflow.app))
+
+### Installing from npm
 
 ```bash
-npm run dev
+npm install n8n-nodes-privacyflow
 ```
 
-This starts n8n with your nodes loaded and hot reload enabled.
+Restart your n8n instance to load the nodes.
 
-## What's Included
+## Operations
 
-This starter repository includes two example nodes to learn from:
+### PrivacyFlow Node
 
-- **[Example Node](nodes/Example/)** - A simple starter node that shows the basic structure with a custom `execute` method
-- **[GitHub Issues Node](nodes/GithubIssues/)** - A complete, production-ready example built using the **declarative style**:
-  - **Low-code approach** - Define operations declaratively without writing request logic
-  - Multiple resources (Issues, Comments)
-  - Multiple operations (Get, Get All, Create)
-  - Two authentication methods (OAuth2 and Personal Access Token)
-  - List search functionality for dynamic dropdowns
-  - Proper error handling and typing
-  - Ideal for HTTP API-based integrations
+The PrivacyFlow node provides two resources with multiple operations:
 
-> [!TIP]
-> The declarative/low-code style (used in GitHub Issues) is the recommended approach for building nodes that interact with HTTP APIs. It significantly reduces boilerplate code and handles requests automatically.
+#### Message Actions
 
-Browse these examples to understand both approaches, then modify them or create your own.
+| Operation | Description |
+|-----------|-------------|
+| **Send a text message** | Send a plaintext message to a contact (max 10,000 characters) |
+| **Get all unread messages** | Retrieve all unread messages from your PrivacyFlow inbox |
 
-## Finding Inspiration
+#### Contact Management
 
-Looking for more examples? Check out these resources:
+| Operation | Description |
+|-----------|-------------|
+| **List contacts** | Get all available contacts from your PrivacyFlow account |
 
-- **[npm Community Nodes](https://www.npmjs.com/search?q=keywords:n8n-community-node-package)** - Browse thousands of community-built nodes on npm using the `n8n-community-node-package` tag
-- **[n8n Built-in Nodes](https://github.com/n8n-io/n8n/tree/master/packages/nodes-base/nodes)** - Study the source code of n8n's official nodes for production-ready patterns and best practices
-- **[n8n Credentials](https://github.com/n8n-io/n8n/tree/master/packages/nodes-base/credentials)** - See how authentication is implemented for various services
+### PrivacyFlow Trigger Node
 
-These are excellent resources to understand how to structure your nodes, handle different API patterns, and implement advanced features.
+The trigger node polls for new messages and starts workflows when they arrive.
 
-## Prerequisites
+| Setting | Description |
+|---------|-------------|
+| **Message Limit** | Maximum messages to retrieve per poll (1-100, default: 50) |
 
-Before you begin, install the following on your development machine:
+## Credentials
 
-### Required
+### PrivacyFlow API
+
+To use PrivacyFlow nodes, you need to authenticate with your PrivacyFlow account.
+
+**Prerequisites:**
+- Create an account at [privacyflow.app](https://privacyflow.app)
+- Generate an API Key from your dashboard
+
+**Credential Fields:**
+
+| Field | Description |
+|-------|-------------|
+| **API Key** | Your PrivacyFlow API key (serves as unique identifier) |
+| **Base URL** | The PrivacyFlow API endpoint (default: `https://api.privacyflow.app`) |
+
+**Authentication Method:** Bearer Token (API Key sent in `Authorization` header)
+
+For detailed setup instructions, visit the [PrivacyFlow Documentation](https://docs.privacyflow.app).
+
+## Usage Examples
+
+### Example 1: Send a Message Workflow
+
+A simple workflow to send a notification message:
+
+```
+Trigger Node → PrivacyFlow (Send Message) → Log Result
+```
+
+1. Start with any trigger node (Webhook, Schedule, etc.)
+2. Add **PrivacyFlow** node → **Message Actions** → **Send a text message**
+3. Set **Recipient** to your Contact ID
+4. Set **Message** to your notification content
+5. Execute the workflow
+
+### Example 2: Poll and Respond Workflow
+
+Automatically respond to incoming messages:
+
+```
+PrivacyFlow Trigger (Poll Messages) → Process Message → PrivacyFlow (Send Response)
+```
+
+1. Add **PrivacyFlow Trigger** node to start the workflow
+2. Set **Message Limit** to 50 (or your preferred value)
+3. Add a processing node (e.g., Function, HTTP Request)
+4. Add **PrivacyFlow** node → **Send a text message**
+5. Use expressions to dynamically set recipient and message from trigger output
+
+### Example 3: Contact Management Workflow
+
+List and manage your PrivacyFlow contacts:
+
+```
+Schedule Trigger → PrivacyFlow (List Contacts) → Filter/Process → CRM/Database
+```
+
+1. Add **Schedule Trigger** node
+2. Add **PrivacyFlow** node → **Contact Management** → **List contacts**
+3. Process the contact list as needed
+4. Sync to external systems or databases
+
+## Security & Privacy
+
+PrivacyFlow is designed with security and privacy as core principles:
+
+### Architecture & Dependencies
+
+- **No External Package Dependencies** - This node package has no external dependencies beyond n8n-workflow
+- **MIT License** - Open source and freely auditable
+- **Code Review** - Source code available at [GitHub](https://github.com/privacyflow-app/n8n-nodes-privacyflow)
+
+### Authentication & Encryption
+
+| Security Feature | Implementation |
+|-----------------|----------------|
+| **API Authentication** | Bearer token authentication via Authorization header |
+| **Transport Security** | All API requests use HTTPS/TLS |
+| **End-to-End Encryption** | Messages encrypted by Signal, SimpleX, or Session protocols |
+| **API Key Storage** | Keys stored securely in n8n credentials (encrypted at rest) |
+
+### Privacy Guarantees
+
+- **Zero Logging** - PrivacyFlow does not log message content or metadata
+- **No Data Retention** - Messages are delivered directly to end users
+- **No Big-Tech Integration** - Uses decentralized/self-hosted messaging platforms
+- **No Tracking** - No analytics or tracking embedded in the node
+
+### Error Handling
+
+The node implements comprehensive error handling:
+
+| Error Type | Response |
+|------------|----------|
+| **Authentication Failed (401)** | Clear error message to check API key |
+| **Rate Limit Exceeded (429)** | Inform user to retry later |
+| **Network Errors** | Detailed error messages for troubleshooting |
+| **Validation Errors** | Clear messages for invalid inputs (empty recipient, message too long, etc.) |
+
+### API Endpoints
+
+The PrivacyFlow node communicates with the following API endpoints:
+
+| Endpoint | Method | Purpose |
+|----------|--------|---------|
+| `/api/v1/health` | GET | Credential health check |
+| `/api/v1/messages/send` | POST | Send a text message |
+| `/api/v1/messages/unread` | GET | Get all unread messages |
+| `/api/v1/messages/poll` | GET | Poll for new messages (trigger) |
+| `/api/v1/contacts` | GET | List all contacts |
+
+### Message Limits
+
+| Constraint | Limit |
+|------------|-------|
+| **Message Length** | 10,000 characters maximum |
+| **Poll Message Limit** | 1-100 messages per poll |
+| **Rate Limiting** | Enforced by PrivacyFlow API |
+
+## Development
+
+### Prerequisites
 
 - **[Node.js](https://nodejs.org/)** (v22 or higher) and npm
   - Linux/Mac/WSL: Install via [nvm](https://github.com/nvm-sh/nvm)
   - Windows: Follow [Microsoft's NodeJS guide](https://learn.microsoft.com/en-us/windows/dev-environment/javascript/nodejs-on-windows)
 - **[git](https://git-scm.com/downloads)**
 
-### Recommended
-
-- Follow n8n's [development environment setup guide](https://docs.n8n.io/integrations/creating-nodes/build/node-development-environment/)
-
-> [!NOTE]
-> The `@n8n/node-cli` is included as a dev dependency and will be installed automatically when you run `npm install`. The CLI includes n8n for local development, so you don't need to install n8n globally.
-
-## Getting Started with this Starter
-
-Follow these steps to create your own n8n community node package:
-
-### 1. Create Your Repository
-
-[Generate a new repository](https://github.com/n8n-io/n8n-nodes-starter/generate) from this template, then clone it:
+### Setup Development Environment
 
 ```bash
-git clone https://github.com/<your-organization>/<your-repo-name>.git
-cd <your-repo-name>
-```
+# Clone the repository
+git clone https://github.com/privacyflow-app/n8n-nodes-privacyflow.git
+cd n8n-nodes-privacyflow
 
-### 2. Install Dependencies
-
-```bash
+# Install dependencies
 npm install
-```
 
-This installs all required dependencies including the `@n8n/node-cli`.
-
-### 3. Explore the Examples
-
-Browse the example nodes in [nodes/](nodes/) and [credentials/](credentials/) to understand the structure:
-
-- Start with [nodes/Example/](nodes/Example/) for a basic node
-- Study [nodes/GithubIssues/](nodes/GithubIssues/) for a real-world implementation
-
-### 4. Build Your Node
-
-Edit the example nodes to fit your use case, or create new node files by copying the structure from [nodes/Example/](nodes/Example/).
-
-> [!TIP]
-> If you want to scaffold a completely new node package, use `npm create @n8n/node` to start fresh with the CLI's interactive generator.
-
-### 5. Configure Your Package
-
-Update `package.json` with your details:
-
-- `name` - Your package name (must start with `n8n-nodes-`)
-- `author` - Your name and email
-- `repository` - Your repository URL
-- `description` - What your node does
-
-Make sure your node is registered in the `n8n.nodes` array.
-
-### 6. Develop and Test Locally
-
-Start n8n with your node loaded:
-
-```bash
+# Start development server
 npm run dev
 ```
 
-This command runs `n8n-node dev` which:
+The development server starts n8n with the PrivacyFlow nodes loaded and hot-reload enabled.
 
-- Builds your node with watch mode
-- Starts n8n with your node available
-- Automatically rebuilds when you make changes
-- Opens n8n in your browser (usually http://localhost:5678)
+### Available Scripts
 
-You can now test your node in n8n workflows!
+| Script | Description |
+|--------|-------------|
+| `npm run dev` | Start n8n with your nodes and watch for changes |
+| `npm run build` | Compile TypeScript to JavaScript for production |
+| `npm run build:watch` | Build in watch mode (auto-rebuild on changes) |
+| `npm run lint` | Check code for errors and style issues |
+| `npm run lint:fix` | Automatically fix linting issues when possible |
+| `npm run release` | Create a new release |
 
-> [!NOTE]
-> Learn more about CLI commands in the [@n8n/node-cli documentation](https://www.npmjs.com/package/@n8n/node-cli).
+### Code Structure
 
-### 7. Lint Your Code
-
-Check for errors:
-
-```bash
-npm run lint
+```
+n8n-nodes-privacyflow/
+├── credentials/
+│   └── PrivacyFlow.credentials.ts    # API credential definition
+├── nodes/
+│   ├── PrivacyFlow/
+│   │   ├── PrivacyFlow.node.ts       # Action node implementation
+│   │   ├── PrivacyFlowTrigger.node.ts # Trigger node implementation
+│   │   ├── PrivacyFlow.node.json     # Action node metadata
+│   │   ├── PrivacyFlowTrigger.node.json # Trigger node metadata
+│   │   └── resources/
+│   │       ├── contact/              # Contact operations
+│   │       └── message/               # Message operations
+├── icons/
+│   ├── banner.jpeg                   # Project banner (root directory)
+│   ├── privacyflow.svg               # Light mode icon
+│   └── privacyflow.dark.svg          # Dark mode icon
+├── package.json                      # Package configuration
+└── README.md                         # This file
 ```
 
-Auto-fix issues when possible:
+### Architecture Overview
 
-```bash
-npm run lint:fix
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      n8n Workflow Engine                      │
+├─────────────────────────────────────────────────────────────┤
+│                                                               │
+│  ┌──────────────────┐         ┌──────────────────┐          │
+│  │ PrivacyFlow      │         │ PrivacyFlow      │          │
+│  │ Trigger Node     │         │ Action Node      │          │
+│  └────────┬─────────┘         └────────┬─────────┘          │
+│           │                            │                     │
+│           └────────────┬───────────────┘                     │
+│                        │                                     │
+└────────────────────────┼─────────────────────────────────────┘
+                         │
+                         ▼
+              ┌──────────────────────┐
+              │   PrivacyFlow API    │
+              └──────────┬───────────┘
+                         │
+         ┌───────────────┼───────────────┐
+         │               │               │
+         ▼               ▼               ▼
+  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐
+  │  Signal     │ │  SimpleX    │ │  Session    │
+  │  Protocol   │ │  Protocol   │ │  Protocol   │
+  └──────┬──────┘ └──────┬──────┘ └──────┬──────┘
+         │               │               │
+         └───────────────┼───────────────┘
+                         │
+                         ▼
+              ┌──────────────────────┐
+              │    End User Device   │
+              └──────────────────────┘
 ```
 
-### 8. Build for Production
+### Authentication Flow
 
-When ready to publish:
-
-```bash
-npm run build
 ```
-
-This compiles your TypeScript code to the `dist/` folder.
-
-### 9. Prepare for Publishing
-
-Before publishing:
-
-1. **Update documentation**: Replace this README with your node's documentation. Use [README_TEMPLATE.md](README_TEMPLATE.md) as a starting point.
-2. **Update the LICENSE**: Add your details to the [LICENSE](LICENSE.md) file.
-3. **Test thoroughly**: Ensure your node works in different scenarios.
-
-### 10. Publish to npm
-
-Publish your package to make it available to the n8n community:
-
-```bash
-npm publish
+User → n8n: Configure Credentials
+n8n → PrivacyFlow Node: API Key + Base URL
+PrivacyFlow Node → PrivacyFlow API: GET /api/v1/health
+PrivacyFlow API: Credential Test
+PrivacyFlow API → PrivacyFlow Node: 200 OK
+PrivacyFlow Node → PrivacyFlow API: POST /api/v1/messages/send
+  (Authorization: Bearer {apiKey})
+PrivacyFlow API → PrivacyFlow Node: Message Sent
+PrivacyFlow Node → n8n: Result
 ```
-
-Learn more about [publishing to npm](https://docs.npmjs.com/packages-and-modules/contributing-packages-to-the-registry).
-
-### 11. Submit for Verification (Optional)
-
-Get your node verified for n8n Cloud:
-
-1. Ensure your node meets the [requirements](https://docs.n8n.io/integrations/creating-nodes/deploy/submit-community-nodes/):
-   - Uses MIT license ✅ (included in this starter)
-   - No external package dependencies
-   - Follows n8n's design guidelines
-   - Passes quality and security review
-
-2. Submit through the [n8n Creator Portal](https://creators.n8n.io/nodes)
-
-**Benefits of verification:**
-
-- Available directly in n8n Cloud
-- Discoverable in the n8n nodes panel
-- Verified badge for quality assurance
-- Increased visibility in the n8n community
-
-## Available Scripts
-
-This starter includes several npm scripts to streamline development:
-
-| Script                | Description                                                      |
-| --------------------- | ---------------------------------------------------------------- |
-| `npm run dev`         | Start n8n with your node and watch for changes (runs `n8n-node dev`) |
-| `npm run build`       | Compile TypeScript to JavaScript for production (runs `n8n-node build`) |
-| `npm run build:watch` | Build in watch mode (auto-rebuild on changes)                    |
-| `npm run lint`        | Check your code for errors and style issues (runs `n8n-node lint`) |
-| `npm run lint:fix`    | Automatically fix linting issues when possible (runs `n8n-node lint --fix`) |
-| `npm run release`     | Create a new release (runs `n8n-node release`)                   |
-
-> [!TIP]
-> These scripts use the [@n8n/node-cli](https://www.npmjs.com/package/@n8n/node-cli) under the hood. You can also run CLI commands directly, e.g., `npx n8n-node dev`.
 
 ## Troubleshooting
 
-### My node doesn't appear in n8n
+### Node doesn't appear in n8n
 
-1. Make sure you ran `npm install` to install dependencies
-2. Check that your node is listed in `package.json` under `n8n.nodes`
-3. Restart the dev server with `npm run dev`
-4. Check the console for any error messages
+1. Verify the package is installed: `npm list n8n-nodes-privacyflow`
+2. Check that the node is registered in `package.json` under `n8n.nodes`
+3. Restart the n8n dev server or your n8n instance
+4. Check the n8n console for any error messages
+
+### Authentication errors
+
+1. Verify your API key is correct from the [PrivacyFlow Dashboard](https://privacyflow.app)
+2. Ensure the Base URL is correct (default: `https://api.privacyflow.app`)
+3. Test your credentials in the n8n credentials panel
+4. Check if your API key has the required permissions
+
+### Rate limiting errors
+
+1. Wait a few minutes before retrying
+2. Reduce polling frequency in the trigger node
+3. Contact PrivacyFlow support if you need higher rate limits
+
+### Network errors
+
+1. Verify your network connection to `api.privacyflow.app`
+2. Check if a firewall is blocking the connection
+3. Verify the Base URL is correct for your region
 
 ### Linting errors
 
-Run `npm run lint:fix` to automatically fix most common issues. For remaining errors, check the [n8n node development guidelines](https://docs.n8n.io/integrations/creating-nodes/).
+```bash
+# Auto-fix most linting issues
+npm run lint:fix
+```
 
-### TypeScript errors
-
-Make sure you're using Node.js v22 or higher and have run `npm install` to get all type definitions.
+For remaining errors, review the n8n node development guidelines.
 
 ## Resources
 
-- **[n8n Node Documentation](https://docs.n8n.io/integrations/creating-nodes/)** - Complete guide to building nodes
-- **[n8n Community Forum](https://community.n8n.io/)** - Get help and share your nodes
-- **[@n8n/node-cli Documentation](https://www.npmjs.com/package/@n8n/node-cli)** - CLI tool reference
-- **[n8n Creator Portal](https://creators.n8n.io/nodes)** - Submit your node for verification
-- **[Submit Community Nodes Guide](https://docs.n8n.io/integrations/creating-nodes/deploy/submit-community-nodes/)** - Verification requirements and process
+- **[PrivacyFlow Documentation](https://docs.privacyflow.app)** - Complete API documentation and guides
+- **[PrivacyFlow Homepage](https://privacyflow.app)** - Learn more about PrivacyFlow
+- **[n8n Community Nodes Documentation](https://docs.n8n.io/integrations/community-nodes/)** - Official n8n community nodes guide
+- **[n8n Community Forum](https://community.n8n.io/)** - Get help and share your workflows
+- **[GitHub Repository](https://github.com/privacyflow-app/n8n-nodes-privacyflow)** - Source code and issues
 
-## Contributing
+## Compatibility
 
-Have suggestions for improving this starter? [Open an issue](https://github.com/n8n-io/n8n-nodes-starter/issues) or submit a pull request!
+| Component | Minimum Version | Tested Versions |
+|-----------|-----------------|-----------------|
+| **n8n** | 1.0.0 | 1.0.0+ |
+| **Node.js** | 22.0.0 | 22.x |
 
 ## License
 
-[MIT](https://github.com/n8n-io/n8n-nodes-starter/blob/master/LICENSE.md)
+[MIT License](https://github.com/privacyflow-app/n8n-nodes-privacyflow/blob/master/LICENSE.md)
+
+## Contributing
+
+Contributions are welcome! Please:
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes with clear commit messages
+4. Ensure all tests pass and linting succeeds
+5. Submit a pull request
+
+For bug reports and feature requests, please use the [GitHub Issues](https://github.com/privacyflow-app/n8n-nodes-privacyflow/issues) page.
